@@ -13,7 +13,7 @@ namespace EncodingAlgorithms.Encodings.TextEncodings
         private static byte[] decodeLIB;
         #endregion
 
-        public Base64Encoder() : base(Encoding.ASCII, Encoding.ASCII)
+        public Base64Encoder() : base()
         {
             if(decodeLIB == null)
             {
@@ -34,16 +34,28 @@ namespace EncodingAlgorithms.Encodings.TextEncodings
                 byte toRead = (input.Length - input.Position) >= 4 ? (byte)4 : (byte)((input.Length - input.Position) % 4);
                 idata[0] = idata[1] = idata[2] = idata[3] = 0;
                 input.Read(idata, 0, toRead);
+				int toWrite = 3;
 
                 idata[0] = decodeLIB[idata[0]];
                 idata[1] = decodeLIB[idata[1]];
-                idata[2] = decodeLIB[idata[2]];
-                idata[3] = decodeLIB[idata[3]];
+				//idata[2] = idata[2] != '=' ? decodeLIB[idata[2]] : (byte)0;
+				//idata[3] = idata[3] != '=' ? decodeLIB[idata[3]] : (byte)0;
+				if (idata[3] == '=') {
+					toWrite = 2;
+					if (idata[2] == '=') {
+						toWrite = 1;
+					} else {
+						idata [2] = decodeLIB [idata [2]];
+					}
+				} else {
+					idata [2] = decodeLIB [idata [2]];
+					idata [3] = decodeLIB [idata [3]];
+				}
                 int inValues = (idata[0] << 18) | (idata[1] << 12) | (idata[2] << 6) | idata[3];
                 odata[0] = (byte)((inValues & masks[0]) >> 16);
                 odata[1] = (byte)((inValues & masks[1]) >> 8);
                 odata[2] = (byte)(inValues & masks[2]);
-                output.Write(odata, 0, 3);
+				output.Write(odata, 0, toWrite);
             }
         }
 
