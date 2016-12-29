@@ -15,7 +15,7 @@ namespace EncodingAlgorithms.Encodings.TextEncodings
 
         public Base64Encoder() : base()
         {
-            if(decodeLIB == null)
+            if (decodeLIB == null)
             {
                 decodeLIB = new byte[byte.MaxValue];
                 for (byte i = 0; i < LIB.Length; i++)
@@ -38,8 +38,6 @@ namespace EncodingAlgorithms.Encodings.TextEncodings
 
                 idata[0] = decodeLIB[idata[0]];
                 idata[1] = decodeLIB[idata[1]];
-				//idata[2] = idata[2] != '=' ? decodeLIB[idata[2]] : (byte)0;
-				//idata[3] = idata[3] != '=' ? decodeLIB[idata[3]] : (byte)0;
 				if (idata[3] == '=') {
 					toWrite = 2;
 					if (idata[2] == '=') {
